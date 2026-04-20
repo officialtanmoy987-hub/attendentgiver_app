@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CareSync – Caregiver App</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --teal:#1D9E75;--teal-light:#E1F5EE;--teal-dark:#085041;
+    --amber:#BA7517;--amber-light:#FAEEDA;
+    --coral:#D85A30;--coral-light:#FAECE7;
+    --blue:#185FA5;--blue-light:#E6F1FB;
+    --red:#A32D2D;--red-light:#FCEBEB;
+    --green:#3B6D11;--green-light:#EAF3DE;
+    --text:#2C2C2A;--text2:#5F5E5A;--text3:#888780;
+    --bg:#F1EFE8;--card:#fff;--border:#D3D1C7;
+  }
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+  #landing{min-height:100vh;display:flex;flex-direction:column}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 2rem;background:var(--card);border-bottom:1px solid var(--border)}
+  .logo{font-family:'DM Serif Display';font-size:1.4rem;color:var(--teal-dark);display:flex;align-items:center;gap:8px}
+  .logo-dot{width:10px;height:10px;background:var(--teal);border-radius:50%}
+  .hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 1.5rem;text-align:center;gap:2rem}
+  .hero-badge{background:var(--teal-light);color:var(--teal-dark);font-size:12px;font-weight:500;padding:6px 16px;border-radius:100px;letter-spacing:0.5px}
+  .hero h1{font-family:'DM Serif Display';font-size:clamp(2rem,5vw,3.2rem);line-height:1.2;color:var(--teal-dark);max-width:620px}
+  .hero h1 span{color:var(--teal)}
+  .hero p{font-size:1.05rem;color:var(--text2);max-width:480px;line-height:1.7}
+  .cta-row{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin-top:0.5rem}
+  .btn-primary{background:var(--teal);color:#fff;border:none;padding:14px 32px;border-radius:100px;font-size:15px;font-weight:500;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif}
+  .btn-primary:hover{background:var(--teal-dark);transform:translateY(-1px)}
+  .btn-secondary{background:transparent;color:var(--teal-dark);border:1.5px solid var(--teal);padding:14px 32px;border-radius:100px;font-size:15px;font-weight:500;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif}
+  .btn-secondary:hover{background:var(--teal-light)}
+  .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;padding:2rem;max-width:900px;width:100%}
+  .feat{background:var(--card);border-radius:16px;padding:1.5rem;border:1px solid var(--border)}
+  .feat-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:12px}
+  .feat h3{font-size:14px;font-weight:500;margin-bottom:6px;color:var(--text)}
+  .feat p{font-size:13px;color:var(--text3);line-height:1.6}
+
+  #dashboard{display:none;min-height:100vh;flex-direction:column}
+  .top-bar{background:var(--card);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:10}
+  .top-bar .logo{font-size:1.1rem}
+  .top-nav{display:flex;gap:1rem;align-items:center}
+  .top-nav button{background:none;border:none;font-size:13px;color:var(--text2);cursor:pointer;padding:6px 12px;border-radius:8px;font-family:'DM Sans';transition:all 0.15s}
+  .top-nav button:hover{background:var(--bg);color:var(--text)}
+  .top-nav button.active{color:var(--teal-dark);font-weight:500;background:var(--teal-light)}
+  .avatar{width:34px;height:34px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;cursor:pointer}
+  .dash-body{display:grid;grid-template-columns:260px 1fr;flex:1}
+  .sidebar{background:var(--card);border-right:1px solid var(--border);padding:1.5rem 1rem;display:flex;flex-direction:column;gap:0.5rem}
+  .sidebar-label{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;padding:8px 12px 4px}
+  .side-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;cursor:pointer;font-size:14px;color:var(--text2);transition:all 0.15s;border:none;background:none;width:100%;text-align:left;font-family:'DM Sans'}
+  .side-item:hover{background:var(--bg);color:var(--text)}
+  .side-item.active{background:var(--teal-light);color:var(--teal-dark);font-weight:500}
+  .side-dot{width:8px;height:8px;border-radius:50%}
+  .main{padding:2rem;overflow-y:auto;background:var(--bg)}
+  .page{display:none}
+  .page.active{display:block}
+  .page-title{font-size:1.3rem;font-weight:500;color:var(--teal-dark);margin-bottom:0.3rem;font-family:'DM Serif Display'}
+  .page-sub{font-size:13px;color:var(--text3);margin-bottom:1.5rem}
+  .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:1.5rem}
+  .stat-card{background:var(--card);border-radius:14px;padding:1.2rem;border:1px solid var(--border)}
+  .stat-label{font-size:12px;color:var(--text3);margin-bottom:6px}
+  .stat-val{font-size:1.6rem;font-weight:500;color:var(--text)}
+  .stat-sub{font-size:11px;margin-top:4px}
+  .stat-sub.up{color:var(--green)}
+  .stat-sub.warn{color:var(--amber)}
+  .section-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+  .card{background:var(--card);border-radius:16px;padding:1.25rem;border:1px solid var(--border)}
+  .card-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+  .card-hdr h3{font-size:14px;font-weight:500;color:var(--text)}
+  .see-all{font-size:12px;color:var(--teal);cursor:pointer;border:none;background:none;font-family:'DM Sans'}
+
+  .patient-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bg)}
+  .patient-row:last-child{border-bottom:none}
+  .p-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0}
+  .p-info{flex:1}
+  .p-name{font-size:13px;font-weight:500;color:var(--text)}
+  .p-detail{font-size:11px;color:var(--text3)}
+  .p-status{font-size:11px;padding:3px 8px;border-radius:100px;font-weight:500}
+  .status-stable{background:var(--green-light);color:var(--green)}
+  .status-attention{background:var(--amber-light);color:var(--amber)}
+  .status-critical{background:var(--red-light);color:var(--red)}
+
+  .task-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bg)}
+  .task-item:last-child{border-bottom:none}
+  .task-check{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+  .task-check.done{background:var(--teal);border-color:var(--teal)}
+  .task-text{flex:1;font-size:13px;color:var(--text)}
+  .task-text.done{text-decoration:line-through;color:var(--text3)}
+  .task-time{font-size:11px;color:var(--text3)}
+
+  .alert-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:10px;margin-bottom:8px;font-size:13px}
+  .alert-item:last-child{margin-bottom:0}
+  .alert-critical{background:var(--red-light);color:var(--red)}
+  .alert-warning{background:var(--amber-light);color:var(--amber)}
+  .alert-info{background:var(--blue-light);color:var(--blue)}
+  .alert-dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex-shrink:0;margin-top:4px}
+
+  .patient-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem}
+  .patient-card{background:var(--card);border-radius:16px;padding:1.25rem;border:1px solid var(--border);cursor:pointer;transition:all 0.2s}
+  .patient-card:hover{border-color:var(--teal);transform:translateY(-2px)}
+  .pc-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .pc-big-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:500}
+  .pc-name{font-size:14px;font-weight:500}
+  .pc-room{font-size:12px;color:var(--text3)}
+  .pc-vitals{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+  .vital-mini{background:var(--bg);border-radius:8px;padding:8px;font-size:11px;color:var(--text3)}
+  .vital-mini span{display:block;font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px}
+
+  .sched-row{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--bg);align-items:flex-start}
+  .sched-row:last-child{border-bottom:none}
+  .sched-time{font-size:12px;color:var(--text3);width:60px;flex-shrink:0;padding-top:2px}
+  .sched-block{flex:1;background:var(--bg);border-radius:10px;padding:10px 12px;border-left:3px solid var(--teal)}
+  .sched-block.med{border-left-color:var(--amber)}
+  .sched-block.check{border-left-color:var(--blue)}
+  .sched-block h4{font-size:13px;font-weight:500;color:var(--text)}
+  .sched-block p{font-size:11px;color:var(--text3);margin-top:2px}
+
+  .msg-row{display:flex;gap:10px;margin-bottom:1rem;align-items:flex-start}
+  .msg-bubble{max-width:70%;padding:10px 14px;border-radius:16px;font-size:13px;line-height:1.5}
+  .msg-in .msg-bubble{background:var(--bg);color:var(--text);border-top-left-radius:4px}
+  .msg-out{justify-content:flex-end}
+  .msg-out .msg-bubble{background:var(--teal);color:#fff;border-top-right-radius:4px}
+  .msg-input-row{display:flex;gap:8px;margin-top:1rem}
+  .msg-input-row input{flex:1;border:1px solid var(--border);border-radius:100px;padding:10px 16px;font-size:13px;background:var(--card);color:var(--text);font-family:'DM Sans';outline:none}
+  .msg-input-row input:focus{border-color:var(--teal)}
+  .send-btn{background:var(--teal);color:#fff;border:none;border-radius:100px;padding:10px 20px;font-size:13px;cursor:pointer;font-family:'DM Sans';font-weight:500}
+</style>
+</head>
+<body>
+
+<!-- LANDING -->
+<div id="landing">
+  <nav class="nav">
+    <div class="logo"><div class="logo-dot"></div>CareSync</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-secondary" style="padding:8px 20px;font-size:13px" onclick="showDash()">Log in</button>
+      <button class="btn-primary" style="padding:8px 20px;font-size:13px" onclick="showDash()">Sign up</button>
+    </div>
+  </nav>
+  <div class="hero">
+    <div class="hero-badge">Trusted by 500+ care facilities</div>
+    <h1>Care that's <span>connected,</span><br>organized &amp; compassionate</h1>
+    <p>A complete platform for caregivers to monitor patients, coordinate tasks, and communicate with families — all in one place.</p>
+    <div class="cta-row">
+      <button class="btn-primary" onclick="showDash()">Continue as Caregiver</button>
+      <button class="btn-secondary" onclick="showDash()">Continue as Family Member</button>
+    </div>
+    <div class="features">
+      <div class="feat">
+        <div class="feat-icon" style="background:var(--teal-light)">🫀</div>
+        <h3>Live Vitals</h3>
+        <p>Real-time monitoring of all patients with instant alerts</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon" style="background:var(--amber-light)">💊</div>
+        <h3>Medication Tracking</h3>
+        <p>Never miss a dose with automated reminders and logs</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon" style="background:var(--blue-light)">👨‍👩‍👧</div>
+        <h3>Family Updates</h3>
+        <p>Keep families informed with automatic care summaries</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon" style="background:var(--green-light)">📋</div>
+        <h3>Task Management</h3>
+        <p>Coordinate care tasks across shifts with ease</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <div class="top-bar">
+    <div class="logo"><div class="logo-dot"></div>CareSync</div>
+    <div class="top-nav">
+      <button class="active" onclick="topNav(this,'overview')">Overview</button>
+      <button onclick="topNav(this,'patients')">Patients</button>
+      <button onclick="topNav(this,'schedule')">Schedule</button>
+      <button onclick="topNav(this,'messages')">Messages</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="font-size:12px;color:var(--text2)">Sarah Mitchell, RN</div>
+      <div class="avatar">SM</div>
+      <button class="btn-secondary" style="padding:6px 14px;font-size:12px" onclick="showLanding()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="dash-body">
+    <div class="sidebar">
+      <div class="sidebar-label">Navigation</div>
+      <button class="side-item active" onclick="showPage('overview',this)">
+        <div class="side-dot" style="background:var(--teal)"></div>Overview
+      </button>
+      <button class="side-item" onclick="showPage('patients',this)">
+        <div class="side-dot" style="background:#B5D4F4"></div>All Patients
+      </button>
+      <button class="side-item" onclick="showPage('schedule',this)">
+        <div class="side-dot" style="background:#FAC775"></div>Schedule
+      </button>
+      <button class="side-item" onclick="showPage('messages',this)">
+        <div class="side-dot" style="background:#C0DD97"></div>Messages
+      </button>
+      <div class="sidebar-label" style="margin-top:1rem">Quick Filters</div>
+      <button class="side-item" onclick="filterPatients('critical')">
+        <div class="side-dot" style="background:var(--coral)"></div>Critical (1)
+      </button>
+      <button class="side-item" onclick="filterPatients('attention')">
+        <div class="side-dot" style="background:var(--amber)"></div>Needs Attention (2)
+      </button>
+      <button class="side-item" onclick="filterPatients('stable')">
+        <div class="side-dot" style="background:var(--green)"></div>Stable (5)
+      </button>
+    </div>
+
+    <div class="main">
+      <!-- OVERVIEW PAGE -->
+      <div class="page active" id="page-overview">
+        <div class="page-title">Good morning, Sarah 👋</div>
+        <div class="page-sub">Tuesday, 21 April · Ward 3B · Shift: 07:00 – 15:00</div>
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-label">Total Patients</div>
+            <div class="stat-val">8</div>
+            <div class="stat-sub up">All accounted for</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Tasks Today</div>
+            <div class="stat-val">14</div>
+            <div class="stat-sub warn">6 remaining</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Medications Due</div>
+            <div class="stat-val">3</div>
+            <div class="stat-sub warn">Within 1 hour</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Active Alerts</div>
+            <div class="stat-val" style="color:var(--red)">2</div>
+            <div class="stat-sub" style="color:var(--red)">Needs review</div>
+          </div>
+        </div>
+
+        <div class="section-row">
+          <div class="card">
+            <div class="card-hdr">
+              <h3>Active Alerts</h3>
+              <button class="see-all">View all</button>
+            </div>
+            <div class="alert-item alert-critical">
+              <div class="alert-dot"></div>
+              <div><strong>Room 304 – Mr. Patel</strong><br>Blood pressure 165/98 — elevated reading at 08:42</div>
+            </div>
+            <div class="alert-item alert-warning">
+              <div class="alert-dot"></div>
+              <div><strong>Room 307 – Mrs. Chen</strong><br>Missed morning medication — paracetamol 500mg</div>
+            </div>
+            <div class="alert-item alert-info">
+              <div class="alert-dot"></div>
+              <div><strong>Shift Handover</strong><br>Notes from night shift ready to review</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-hdr">
+              <h3>Today's Tasks</h3>
+              <button class="see-all">See all 14</button>
+            </div>
+            <div class="task-item">
+              <div class="task-check done" id="t1" onclick="toggleTask('t1','tt1')">✓</div>
+              <div class="task-text done" id="tt1">Morning vitals check – all patients</div>
+              <div class="task-time">07:30</div>
+            </div>
+            <div class="task-item">
+              <div class="task-check done" id="t2" onclick="toggleTask('t2','tt2')">✓</div>
+              <div class="task-text done" id="tt2">Administer insulin – Room 301</div>
+              <div class="task-time">08:00</div>
+            </div>
+            <div class="task-item">
+              <div class="task-check" id="t3" onclick="toggleTask('t3','tt3')"></div>
+              <div class="task-text" id="tt3">Blood pressure review – Mr. Patel</div>
+              <div class="task-time">09:00</div>
+            </div>
+            <div class="task-item">
+              <div class="task-check" id="t4" onclick="toggleTask('t4','tt4')"></div>
+              <div class="task-text" id="tt4">Wound dressing change – Room 306</div>
+              <div class="task-time">10:30</div>
+            </div>
+            <div class="task-item">
+              <div class="task-check" id="t5" onclick="toggleTask('t5','tt5')"></div>
+              <div class="task-text" id="tt5">Family call – Mrs. Chen's daughter</div>
+              <div class="task-time">11:00</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hdr">
+            <h3>My Patients</h3>
+            <button class="see-all" onclick="showPage('patients',null)">View all →</button>
+          </div>
+          <div id="mini-patients"></div>
+        </div>
+      </div>
+
+      <!-- PATIENTS PAGE -->
+      <div class="page" id="page-patients">
+        <div class="page-title">All Patients</div>
+        <div class="page-sub" id="patients-sub">Ward 3B · 8 patients assigned to you</div>
+        <div class="patient-grid" id="patient-grid"></div>
+      </div>
+
+      <!-- SCHEDULE PAGE -->
+      <div class="page" id="page-schedule">
+        <div class="page-title">Today's Schedule</div>
+        <div class="page-sub">Tuesday, 21 April · 07:00 – 15:00</div>
+        <div class="card">
+          <div id="sched-list"></div>
+        </div>
+      </div>
+
+      <!-- MESSAGES PAGE -->
+      <div class="page" id="page-messages">
+        <div class="page-title">Messages</div>
+        <div class="page-sub">Team communication</div>
+        <div class="section-row">
+          <div class="card" style="grid-column:1/-1;max-width:600px">
+            <div id="msg-thread">
+              <div class="msg-row msg-in"><div class="msg-bubble"><strong>Dr. Kapoor:</strong> Sarah, please check Mr. Patel's BP again at 10am and update the chart. If still elevated consider calling pharmacy.</div></div>
+              <div class="msg-row msg-out"><div class="msg-bubble">Understood. Will do it at 10am sharp and report back.</div></div>
+              <div class="msg-row msg-in"><div class="msg-bubble"><strong>Head Nurse:</strong> Reminder — shift handover notes are on the board. Please review before 09:00.</div></div>
+              <div class="msg-row msg-out"><div class="msg-bubble">Reviewed. I've noted the observations from night shift.</div></div>
+            </div>
+            <div class="msg-input-row">
+              <input type="text" id="msg-in" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendMsg()">
+              <button class="send-btn" onclick="sendMsg()">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const patients=[
+  {name:"James Patel",room:"304",age:68,status:"critical",initials:"JP",color:"#FCEBEB",tcolor:"#A32D2D",cond:"Hypertension, Diabetes",hr:"98",bp:"165/98",spo2:"94%",temp:"37.8°C"},
+  {name:"Mary Chen",room:"307",age:74,status:"attention",initials:"MC",color:"#FAEEDA",tcolor:"#BA7517",cond:"Pneumonia, COPD",hr:"82",bp:"128/84",spo2:"96%",temp:"37.2°C"},
+  {name:"David Osei",room:"302",age:55,status:"attention",initials:"DO",color:"#FAEEDA",tcolor:"#BA7517",cond:"Post-op recovery",hr:"76",bp:"122/78",spo2:"97%",temp:"36.9°C"},
+  {name:"Priya Sharma",room:"301",age:62,status:"stable",initials:"PS",color:"#EAF3DE",tcolor:"#3B6D11",cond:"Type 2 Diabetes",hr:"72",bp:"118/76",spo2:"98%",temp:"36.6°C"},
+  {name:"Robert Kim",room:"305",age:70,status:"stable",initials:"RK",color:"#EAF3DE",tcolor:"#3B6D11",cond:"Cardiac monitoring",hr:"68",bp:"120/80",spo2:"98%",temp:"36.7°C"},
+  {name:"Linda Torres",room:"306",age:58,status:"stable",initials:"LT",color:"#EAF3DE",tcolor:"#3B6D11",cond:"Post-op wound care",hr:"74",bp:"115/75",spo2:"99%",temp:"36.5°C"},
+  {name:"Ahmed Rashid",room:"303",age:65,status:"stable",initials:"AR",color:"#E1F5EE",tcolor:"#085041",cond:"Kidney disease",hr:"71",bp:"130/85",spo2:"97%",temp:"36.8°C"},
+  {name:"Susan Wright",room:"308",age:78,status:"stable",initials:"SW",color:"#E1F5EE",tcolor:"#085041",cond:"General observation",hr:"70",bp:"124/82",spo2:"98%",temp:"36.6°C"},
+];
+
+const schedule=[
+  {time:"07:00",title:"Start of shift",desc:"Check handover notes, review alerts",type:"check"},
+  {time:"07:30",title:"Morning vitals",desc:"Check all 8 patients",type:"check"},
+  {time:"08:00",title:"Medication round",desc:"Insulin – Room 301, Metformin – Room 304",type:"med"},
+  {time:"09:00",title:"Doctor rounds",desc:"Accompany Dr. Kapoor on ward rounds",type:"check"},
+  {time:"10:00",title:"BP recheck – Room 304",desc:"Mr. Patel blood pressure follow-up",type:""},
+  {time:"10:30",title:"Wound dressing – Room 306",desc:"Linda Torres – surgical wound",type:""},
+  {time:"11:00",title:"Family call",desc:"Mrs. Chen's daughter – care update",type:"check"},
+  {time:"12:00",title:"Medication round",desc:"Afternoon medications for all patients",type:"med"},
+  {time:"13:30",title:"Documentation",desc:"Update patient charts and care plans",type:"check"},
+  {time:"14:45",title:"End of shift prep",desc:"Prepare handover notes",type:"check"},
+];
+
+function renderMiniPatients(){
+  const el=document.getElementById('mini-patients');
+  el.innerHTML=patients.map(p=>`
+    <div class="patient-row">
+      <div class="p-avatar" style="background:${p.color};color:${p.tcolor}">${p.initials}</div>
+      <div class="p-info">
+        <div class="p-name">${p.name}</div>
+        <div class="p-detail">Room ${p.room} · ${p.cond}</div>
+      </div>
+      <span class="p-status status-${p.status}">${p.status.charAt(0).toUpperCase()+p.status.slice(1)}</span>
+    </div>
+  `).join('');
+}
+
+function renderPatientGrid(filter){
+  const grid=document.getElementById('patient-grid');
+  const sub=document.getElementById('patients-sub');
+  let list=filter?patients.filter(p=>p.status===filter):patients;
+  if(filter) sub.textContent=`Filtered: ${filter} (${list.length} patient${list.length!==1?'s':''})`;
+  else sub.textContent=`Ward 3B · 8 patients assigned to you`;
+  grid.innerHTML=list.map(p=>`
+    <div class="patient-card">
+      <div class="pc-top">
+        <div class="pc-big-avatar" style="background:${p.color};color:${p.tcolor}">${p.initials}</div>
+        <div>
+          <div class="pc-name">${p.name}</div>
+          <div class="pc-room">Room ${p.room} · Age ${p.age}</div>
+        </div>
+        <span class="p-status status-${p.status}" style="margin-left:auto">${p.status.charAt(0).toUpperCase()+p.status.slice(1)}</span>
+      </div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:8px">${p.cond}</div>
+      <div class="pc-vitals">
+        <div class="vital-mini"><span>${p.hr} bpm</span>Heart rate</div>
+        <div class="vital-mini"><span>${p.bp}</span>Blood pressure</div>
+        <div class="vital-mini"><span>${p.spo2}</span>SpO₂</div>
+        <div class="vital-mini"><span>${p.temp}</span>Temperature</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderSchedule(){
+  const el=document.getElementById('sched-list');
+  el.innerHTML=schedule.map(s=>`
+    <div class="sched-row">
+      <div class="sched-time">${s.time}</div>
+      <div class="sched-block ${s.type}">
+        <h4>${s.title}</h4>
+        <p>${s.desc}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+function showDash(){
+  document.getElementById('landing').style.display='none';
+  document.getElementById('dashboard').style.display='flex';
+  renderMiniPatients();
+  renderPatientGrid();
+  renderSchedule();
+}
+function showLanding(){
+  document.getElementById('landing').style.display='flex';
+  document.getElementById('dashboard').style.display='none';
+}
+
+function showPage(name,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.side-item').forEach(s=>s.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.top-nav button').forEach(b=>{
+    b.classList.toggle('active',b.getAttribute('onclick')&&b.getAttribute('onclick').includes(name));
+  });
+}
+
+function topNav(el,name){
+  document.querySelectorAll('.top-nav button').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  showPage(name,null);
+}
+
+function filterPatients(status){
+  showPage('patients',null);
+  renderPatientGrid(status);
+}
+
+function toggleTask(checkId,textId){
+  const c=document.getElementById(checkId);
+  const t=document.getElementById(textId);
+  const done=c.classList.toggle('done');
+  c.innerHTML=done?'✓':'';
+  t.classList.toggle('done',done);
+}
+
+function sendMsg(){
+  const inp=document.getElementById('msg-in');
+  const val=inp.value.trim();
+  if(!val)return;
+  const thread=document.getElementById('msg-thread');
+  const div=document.createElement('div');
+  div.className='msg-row msg-out';
+  div.innerHTML=`<div class="msg-bubble">${val}</div>`;
+  thread.appendChild(div);
+  inp.value='';
+  thread.scrollTop=thread.scrollHeight;
+}
+</script>
+</body>
+</html>
